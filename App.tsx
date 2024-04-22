@@ -1,12 +1,16 @@
 import {
+  ViroARImageMarker,
   ViroARScene,
   ViroARSceneNavigator,
+  ViroARTrackingTargets,
+  ViroBox,
+  ViroNode,
   ViroText,
   ViroTrackingReason,
   ViroTrackingStateConstants,
 } from "@viro-community/react-viro";
 import React, { useState } from "react";
-import { StyleSheet } from "react-native";
+import { Image, StyleSheet } from "react-native";
 
 const HelloWorldSceneAR = () => {
   const [text, setText] = useState("Initializing AR...");
@@ -21,6 +25,15 @@ const HelloWorldSceneAR = () => {
     }
   }
 
+  ViroARTrackingTargets.createTargets({
+    "billeteReco": {
+      source: require('./100pe.jpg'),
+      orientation: "Up",
+      physicalWidth: 0.1, // real world width in meters 
+      type: 'Image' 
+    },
+  });
+
   function onChangeCurrency () {
     const options = {method: 'GET', headers: {accept: 'application/json'}};
 
@@ -32,12 +45,11 @@ const HelloWorldSceneAR = () => {
 
   return (
     <ViroARScene onTrackingUpdated={onInitialized}>
-      <ViroText
-        text={text}
-        scale={[0.5, 0.5, 0.5]}
-        position={[0, 0, -1]}
-        style={styles.helloWorldTextStyle}
-      />
+      <ViroARImageMarker target={"imgObjetivo"}>
+        <ViroBox position={[0,.25,0]} scale={[.5,.5,.5]}></ViroBox>
+        <ViroText text="ESTOY DETECTANDO LA LANA" scale={[.1,.1,.1]}
+        style={styles.helloWorldTextStyle}/>
+      </ViroARImageMarker>
     </ViroARScene>
   );
 };
@@ -45,10 +57,10 @@ const HelloWorldSceneAR = () => {
 export default () => {
   return (
     <ViroARSceneNavigator
+    numberOfTrackedImages={1}
       autofocus={true}
       initialScene={{
-        scene: HelloWorldSceneAR,
-      }}
+        scene: HelloWorldSceneAR}}
       style={styles.f1}
     />
   );
@@ -64,3 +76,4 @@ var styles = StyleSheet.create({
     textAlign: "center",
   },
 });
+
